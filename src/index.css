@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Alignment+Mono&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom glossy background gradients and UI enhancements */
+body {
+  font-family: var(--font-sans);
+  background-attachment: fixed;
+}
+
+/* Draggable handle for in-app picture-in-picture */
+.pip-draggable {
+  cursor: grab;
+}
+.pip-draggable:active {
+  cursor: grabbing;
+}
+
+/* Smooth Android transitions */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.7);
+  }
+}
+
+.glow-active {
+  animation: pulseGlow 3s infinite;
+}
+

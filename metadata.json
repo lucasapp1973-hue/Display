@@ -1,0 +1,6 @@
+{
+  "name": "Android Superintendent Companion",
+  "description": "Premium Android simulator wrapper for the Superintendent web platform with native and in-app Picture-in-Picture overlays.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
