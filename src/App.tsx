@@ -1,23 +1,24 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Laptop, 
-  Smartphone, 
-  Layers, 
-  Settings, 
-  HelpCircle, 
-  Flame,
-  Info
+  Smartphone,
+  Info,
+  Maximize,
+  Minimize,
+  Download,
+  AlertCircle
 } from 'lucide-react';
 import { DeviceSettings, WorkspaceNote, SystemLog } from './types';
 import PhoneSimulator from './components/PhoneSimulator';
-import Dashboard from './components/Dashboard';
 import FaviconHandler from './components/FaviconHandler';
 
 export default function App() {
   const [url, setUrl] = useState('https://ais-pre-h3ve3nynzxhojmrha7kf3h-750421392181.us-east1.run.app/?mode=superintendent');
   const [isPip, setIsPip] = useState(false);
   const [faviconTheme, setFaviconTheme] = useState({ themeColor: '#10b981', accentColor: '#3b82f6' });
+  
+  // Custom display configuration: 'emulator' (centered framed phone) vs 'fullscreen' (immersive web view fit)
+  const [displayMode, setDisplayMode] = useState<'emulator' | 'fullscreen'>('emulator');
 
   // 1. Emulated hardware settings state
   const [settings, setSettings] = useState<DeviceSettings>({
@@ -26,9 +27,9 @@ export default function App() {
     wallpaper: 'cosmic-dark',
     orientation: 'portrait',
     showStatusBar: true,
-    modelName: 'AI Studio Superintendent Pro',
-    simulatedLatency: 28,
-    batteryLevel: 95,
+    modelName: 'Google Pixel 9 Pro Extended',
+    simulatedLatency: 15,
+    batteryLevel: 98,
     networkType: '5G'
   });
 
@@ -80,9 +81,9 @@ export default function App() {
 
   const [logs, setLogs] = useState<SystemLog[]>([
     { id: '1', time: getFormattedTime(), category: 'DEVICE', message: 'Iniciando Kernel Android 15 (Superintendent OS v15.4)', severity: 'info' },
-    { id: '2', time: getFormattedTime(), category: 'DEVICE', message: 'Processador AI Tensor G4 ativando barramento térmico estável', severity: 'success' },
-    { id: '3', time: getFormattedTime(), category: 'NETWORK', message: 'Conectando à torre móvel virtual ... Conectado com sucesso (LTE/5G)', severity: 'success' },
-    { id: '4', time: getFormattedTime(), category: 'SUPERINTENDENT', message: 'Workspace pronto. Preparando exibição para: https://ais-pre-h3ve3nynzxhojmrha7kf3h-750421392181.us-east1.run.app/?mode=superintendent', severity: 'info' }
+    { id: '2', time: getFormattedTime(), category: 'DEVICE', message: 'Processador AI Tensor G4 estabilizado em 37°C com segurança total', severity: 'success' },
+    { id: '3', time: getFormattedTime(), category: 'NETWORK', message: 'Conectado à infraestrutura de roteamento do Superintendente', severity: 'success' },
+    { id: '4', time: getFormattedTime(), category: 'SUPERINTENDENT', message: 'WebView carregando: ais-pre-h3ve3nynzxhojmrha7kf3h-750421392181.us-east1.run.app', severity: 'info' }
   ]);
 
   const addLog = (message: string, category: SystemLog['category'], severity: SystemLog['severity'] = 'info') => {
@@ -93,7 +94,7 @@ export default function App() {
       message,
       severity
     };
-    setLogs(prev => [...prev.slice(-90), newLog]); // Keep last 100 logs
+    setLogs(prev => [...prev.slice(-90), newLog]);
   };
 
   const clearLogs = () => {
@@ -101,108 +102,123 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070a13] text-gray-100 flex flex-col font-sans selection:bg-emerald-500/20 selection:text-emerald-400">
+    <div className="min-h-screen bg-[#04060b] text-gray-100 flex flex-col items-center justify-center font-sans selection:bg-emerald-500/20 selection:text-emerald-400 relative overflow-hidden">
       
-      {/* 1. Canvas Dynamic Tab Icon/Favicon controller */}
+      {/* 1. Dynamic Monitor Favicon Render Engine */}
       <FaviconHandler themeColor={faviconTheme.themeColor} accentColor={faviconTheme.accentColor} />
 
-      {/* Background vector styling elements */}
-      <div className="absolute inset-x-0 top-0 h-[500px] bg-gradient-to-b from-indigo-950/20 via-transparent to-transparent pointer-events-none z-0" />
-      <div className="absolute top-1/4 left-1/4 h-72 w-72 rounded-full bg-emerald-600/5 blur-[120px] pointer-events-none z-0" />
-      <div className="absolute bottom-1/4 right-1/4 h-72 w-72 rounded-full bg-cyan-600/5 blur-[120px] pointer-events-none z-0" />
+      {/* Cinematic subtle grid backdrop */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#111827_1px,transparent_1px),linear-gradient(to_bottom,#111827_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30 pointer-events-none z-0" />
+      <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none z-0" />
 
-      {/* Main Grid Wrapper */}
-      <main className="flex-grow max-w-[1500px] mx-auto w-full p-4 lg:p-6 flex flex-col justify-between z-10 relative">
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start h-full">
-          
-          {/* Dashboard Left Wing (12 Columns in low resolutions, splits on XL) */}
-          <section className={`transition-all duration-300 xl:col-span-8 flex flex-col gap-6 ${isPip ? 'xl:col-span-12' : ''}`}>
-            
-            <Dashboard 
-              settings={settings}
-              setSettings={setSettings}
-              url={url}
-              setUrl={setUrl}
-              isPip={isPip}
-              setIsPip={setIsPip}
-              logs={logs}
-              addLog={addLog}
-              clearLogs={clearLogs}
-              notes={notes}
-              addNote={addNote}
-              deleteNote={deleteNote}
-              setFaviconTheme={setFaviconTheme}
-            />
-
-            {/* Quick Informational Guide */}
-            <div className="bg-slate-900/20 border border-slate-800/80 p-4 rounded-xl flex items-start gap-3 mt-4">
-              <Info className="h-5 w-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-zinc-400 leading-relaxed">
-                <span className="font-semibold text-slate-200 block mb-1">Como funciona o Sistema de Picture-in-Picture?</span>
-                No seu computador ou smartphone de trabalho, o modo flutuante é perfeito para manter o monitoramento de canais no canto da tela enquanto realiza vistorias administrativas secundárias na parte principal do companion. Se preferir desencaixar o telefone em uma janela real do Windows ou macOS, ative o <span className="text-cyan-400 font-semibold font-mono">PiP Nativo</span> clicando no botão para utilizar o suporte nativo do Google Chrome!
-              </div>
-            </div>
-          </section>
-
-          {/* Stand/Pedestal and Right-Wing Android Simulator frame */}
-          {!isPip ? (
-            /* Desktop presentation of the device: mounted inside gorgeous physical glass glow pedestal */
-            <section id="phone-mount-point" className="xl:col-span-4 flex justify-center items-center h-full xl:sticky xl:top-6 min-h-[700px] w-full self-start">
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="w-full flex justify-center items-center relative"
-              >
-                {/* Visual Glass Base Platform */}
-                <div className="absolute inset-x-4 bottom-[-16px] h-8 bg-gradient-to-t from-slate-950/90 to-transparent blur-md rounded-2xl border-b border-slate-800 pointer-events-none" />
-                <div className="absolute -inset-10 bg-gradient-to-tr from-emerald-500/10 via-transparent to-cyan-500/10 blur-[64px] rounded-full pointer-events-none" />
-                
-                <PhoneSimulator 
-                  settings={settings}
-                  setSettings={setSettings}
-                  url={url}
-                  isPip={isPip}
-                  setIsPip={setIsPip}
-                  addLog={addLog}
-                />
-              </motion.div>
-            </section>
-          ) : (
-            /* Draggable floating picture-in-picture mode fallback container */
-            <AnimatePresence>
-              <motion.div 
-                id="phone-mount-point"
-                drag
-                dragMomentum={false}
-                dragElastic={0}
-                dragConstraints={{ left: 20, right: window.innerWidth - 340, top: 20, bottom: window.innerHeight - 500 }}
-                className="fixed bottom-6 right-6 z-50 rounded-[2.5rem] bg-slate-950/90 shadow-2xl border border-emerald-500/40 glow-active select-none"
-              >
-                <div className="p-1 cursor-grab active:cursor-grabbing">
-                  <PhoneSimulator 
-                    settings={settings}
-                    setSettings={setSettings}
-                    url={url}
-                    isPip={isPip}
-                    setIsPip={setIsPip}
-                    addLog={addLog}
-                  />
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          )}
-
+      {/* 
+        PREMIUM DOCK CONTROL: Only 1 tiny minimalist bar at the top of the interface.
+        Allows switching between bezel view and 100% immersive fullscreen.
+        Allows downloading the ready-to-compile APK guide.
+      */}
+      <div className="absolute top-4 left-12 right-12 z-50 flex justify-between items-center bg-slate-950/80 backdrop-blur-md px-4.5 py-2.5 rounded-full border border-slate-800/80 shadow-2xl max-w-4xl mx-auto">
+        <div className="flex items-center gap-2">
+          {/* Custom displaying monitor icon */}
+          <svg className="h-5 w-5 text-emerald-400" viewBox="0 0 100 100" fill="none">
+            <rect x="15" y="22" width="70" height="44" rx="6" fill="#0f172a" stroke="#10b981" strokeWidth="6" />
+            <path d="M40 66 L60 66 M50 66 L50 78 M30 78 L70 78" stroke="#10b981" strokeWidth="6" strokeLinecap="round" />
+            <circle cx="50" cy="44" r="5" fill="#3b82f6" />
+          </svg>
+          <span className="text-[11px] font-mono tracking-widest text-slate-100 uppercase font-bold flex items-center gap-1.5">
+            Android Wrapper
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </span>
         </div>
-      </main>
 
-      {/* Full-width aesthetic bottom status line */}
-      <footer className="w-full border-t border-slate-900 bg-slate-950/80 py-3.5 text-center text-[11px] font-mono text-zinc-500 tracking-wider flex flex-col md:flex-row justify-between items-center px-6 gap-2">
-        <span>ANDROID PORTAL TERMINAL • ACTIVE SECURED CONNECTION</span>
-        <span className="text-zinc-600 flex items-center gap-1.5 uppercase">
-          <Flame className="h-3 w-3 text-emerald-500" /> AI Studio Superintendent Android Companion © 2026
-        </span>
-      </footer>
+        {/* Action Controls */}
+        <div className="flex items-center gap-2">
+          {/* Toggle View Format */}
+          <button
+            onClick={() => {
+              const next = displayMode === 'emulator' ? 'fullscreen' : 'emulator';
+              setDisplayMode(next);
+              addLog(`Layout alterado para: ${next === 'emulator' ? 'Modulação Flagship' : 'Tela Cheia Nativa'}`, 'DEVICE', 'info');
+            }}
+            className="p-1 px-3 rounded-full bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:text-emerald-400 text-slate-300 text-[10px] font-mono font-bold transition flex items-center gap-1 cursor-pointer"
+            title="Alternar entre visualização de molde físico ou tela cheia sem bordas"
+          >
+            {displayMode === 'emulator' ? <Maximize className="h-3 w-3" /> : <Minimize className="h-3 w-3" />}
+            {displayMode === 'emulator' ? 'IMERSIVO (PWA/APK)' : 'EXIBIR PIXEL MOCKUP'}
+          </button>
+
+          {/* Quick install guide */}
+          <button
+            onClick={() => {
+              addLog('Exportando roteiro técnico para compilação local de APK nativa', 'DEVICE', 'success');
+              alert('O arquivo "/android-apk-instructions.txt" com os scripts de compilação da APK já foi criado na raiz do seu projeto! Use-o para gerar o APK físico usando CapacitorJS nas suas dependências locais.');
+            }}
+            className="p-1 px-3 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono hover:bg-emerald-900/10 font-bold transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <Download className="h-3.5 w-3.5" />
+            BAIXAR MANUAL APK
+          </button>
+        </div>
+      </div>
+
+      {/* Main Container Content */}
+      <main className="w-full flex-grow flex items-center justify-center z-10 p-2 md:p-6 select-none relative pt-20">
+        <AnimatePresence mode="wait">
+          {displayMode === 'emulator' ? (
+            /* Centered framed desktop presentation over clean minimal layout - NO SIDEBAR FOOTERS OR TEXT */
+            <motion.div 
+              key="emulator-frame"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              className="flex justify-center items-center w-full max-w-lg relative"
+            >
+              {/* Stand base plate */}
+              <div className="absolute inset-x-8 bottom-[-20px] h-10 bg-gradient-to-t from-slate-950/90 to-transparent blur-lg rounded-full pointer-events-none" />
+              
+              <PhoneSimulator 
+                settings={settings}
+                setSettings={setSettings}
+                url={url}
+                setUrl={setUrl}
+                isPip={isPip}
+                setIsPip={setIsPip}
+                logs={logs}
+                addLog={addLog}
+                clearLogs={clearLogs}
+                notes={notes}
+                addNote={addNote}
+                deleteNote={deleteNote}
+                setFaviconTheme={setFaviconTheme}
+              />
+            </motion.div>
+          ) : (
+            /* 100% immersive fluid screen representation - hides bezel margins entirely to act as an Android App */
+            <motion.div 
+              key="fullscreen-frame"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 15 }}
+              className="w-full h-screen fixed inset-0 z-20 flex flex-col bg-black"
+            >
+              <PhoneSimulator 
+                settings={{ ...settings, orientation: 'portrait' }}
+                setSettings={setSettings}
+                url={url}
+                setUrl={setUrl}
+                isPip={isPip}
+                setIsPip={setIsPip}
+                logs={logs}
+                addLog={addLog}
+                clearLogs={clearLogs}
+                notes={notes}
+                addNote={addNote}
+                deleteNote={deleteNote}
+                setFaviconTheme={setFaviconTheme}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
     </div>
   );
 }

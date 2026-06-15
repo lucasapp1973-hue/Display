@@ -1,0 +1,55 @@
+========================================================================
+       INSTRUÇÕES DE COMPILAÇÃO DO APK NATIVO (ANDROID)
+========================================================================
+
+Este aplicativo foi desenvolvido utilizando React, Vite e Tailwind CSS. Ele é totalmente compatível com o CapacitorJS da Ionic, o que significa que você pode transformá-lo em um aplicativo nativo para Android (.apk) que roda em tela cheia no seu smartphone com apenas alguns comandos.
+
+Siga os passos rápidos abaixo no terminal do seu computador para gerar o arquivo APK instalável:
+
+------------------------------------------------------------------------
+Passo 1: Preparar o Projeto Localmente
+------------------------------------------------------------------------
+Extraia ou clone os arquivos do projeto no seu computador e execute:
+$ npm install              # Instala as dependências de desenvolvimento
+$ npm run build            # Compila o app otimizado para a pasta "dist"
+
+------------------------------------------------------------------------
+Passo 2: Adicionar o CapacitorJS (Poderoso Wrapper Nativo)
+------------------------------------------------------------------------
+Execute os seguintes comandos comandos para inicializar a integração Android:
+$ npm install @capacitor/core @capacitor/cli     # Biblioteca núcleo
+$ npx cap init "Superintendent Companion" "com.superintendent.app" --web-dir=dist
+
+------------------------------------------------------------------------
+Passo 3: Adicionar a Plataforma Android
+------------------------------------------------------------------------
+Instale os pacotes de runtime do Android e crie os arquivos de código java/kotlin nativos:
+$ npm install @capacitor/android
+$ npx cap add android
+
+------------------------------------------------------------------------
+Passo 4: Sincronizar os Arquivos Compilados com o Projeto Nativo
+------------------------------------------------------------------------
+Sempre que fizer alterações no código React, reconstrua o app e sincronize:
+$ npm run build
+$ npx cap copy             # Copia os arquivos estáticos de "dist" para o Android nativo
+$ npx cap sync             # Atualiza dependências e plugins nativos
+
+------------------------------------------------------------------------
+Passo 5: Abrir no Android Studio e Gerar / Instalar o APK (.apk)
+------------------------------------------------------------------------
+Execute o comando para abrir o projeto nativo do Android diretamente no Android Studio:
+$ npx cap open android
+
+No Android Studio (gratuito para baixar):
+1. Aguarde o Gradle sincronizar os arquivos.
+2. Para gerar o APK assinado para o seu dispositivo:
+   Vá em: Build -> Build Bundle(s) / APK(s) -> Build APK(s)
+3. Após concluído, uma notificação exibirá o link para a pasta que contém o arquivo "app-debug.apk"!
+4. Copie este arquivo para o seu celular através de cabo USB, Whatsapp ou Google Drive e instale-o diretamente!
+
+Dica: No celular, certifique-se de permitir "Instalar aplicativos de fontes desconhecidas" para o gerenciador de arquivos correspondente.
+
+========================================================================
+Pronto! Agora você tem um app nativo Android completo rodando a plataforma!
+========================================================================
