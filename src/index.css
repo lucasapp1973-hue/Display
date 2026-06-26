@@ -8,9 +8,21 @@
 }
 
 /* Custom glossy background gradients and UI enhancements */
+html, body, #root {
+  height: 100%;
+  height: -webkit-fill-available;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+}
+
 body {
   font-family: var(--font-sans);
-  background-attachment: fixed;
+  background-color: #04060b;
 }
 
 /* Draggable handle for in-app picture-in-picture */

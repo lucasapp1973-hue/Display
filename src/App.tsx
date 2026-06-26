@@ -21,13 +21,44 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
 
+  // Programmatically hide browser URL bar / navigation bar in mobile PWAs instantly on mount
+  useEffect(() => {
+    const hideAddressBar = () => {
+      window.scrollTo(0, 1);
+    };
+
+    // Trigger on load
+    hideAddressBar();
+
+    // Trigger on successive tiny intervals as the DOM stabilizes
+    const t1 = setTimeout(hideAddressBar, 100);
+    const t2 = setTimeout(hideAddressBar, 400);
+
+    // Capture the very first tap/interaction to instantly collapse if browser delayed it
+    const handleInitialInteraction = () => {
+      hideAddressBar();
+      document.removeEventListener('touchstart', handleInitialInteraction);
+      document.removeEventListener('click', handleInitialInteraction);
+    };
+
+    document.addEventListener('touchstart', handleInitialInteraction, { passive: true });
+    document.addEventListener('click', handleInitialInteraction, { passive: true });
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      document.removeEventListener('touchstart', handleInitialInteraction);
+      document.removeEventListener('click', handleInitialInteraction);
+    };
+  }, []);
+
   const handleReload = () => {
     setIframeLoading(true);
     setIframeKey(p => p + 1);
   };
 
   return (
-    <div className="min-h-screen bg-[#060813] text-gray-100 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="w-full h-full bg-[#060813] text-gray-100 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
       {/* Dynamic Tab Icon Display Favicon */}
       <FaviconHandler themeColor="#10b981" accentColor="#3b82f6" />
