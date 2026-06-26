@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Smartphone, RefreshCw, ArrowLeft, Home, Menu, Wifi, Signal, Battery, ExternalLink } from 'lucide-react';
-import FaviconHandler from './components/FaviconHandler';
 // @ts-ignore
 import superintendentIcon from './assets/images/superintendent_icon_1782443595694.jpg';
 
@@ -56,9 +55,6 @@ export default function App() {
   return (
     <div className="w-full h-full bg-[#060813] text-gray-100 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       
-      {/* Dynamic Tab Icon Display Favicon */}
-      <FaviconHandler themeColor="#10b981" accentColor="#3b82f6" />
-
       {/* Futuristic Background Glow Elements */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-25 pointer-events-none z-0" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none z-0" />
