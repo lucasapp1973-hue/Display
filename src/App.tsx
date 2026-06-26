@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Smartphone, RefreshCw, ArrowLeft, Home, Menu, Wifi, Signal, Battery, ExternalLink } from 'lucide-react';
 import FaviconHandler from './components/FaviconHandler';
+// @ts-ignore
+import superintendentIcon from './assets/images/superintendent_icon_1782443595694.jpg';
 
 export default function App() {
   const targetUrl = 'https://ais-pre-h3ve3nynzxhojmrha7kf3h-750421392181.us-east1.run.app/?mode=superintendent';
@@ -93,13 +95,22 @@ export default function App() {
           {/* 2. Embedded Web Content viewport */}
           <div className="relative flex-grow w-full h-full bg-slate-950 overflow-hidden">
             {iframeLoading && (
-              <div className="absolute inset-0 bg-slate-950 z-20 flex flex-col justify-center items-center p-8 text-center bg-[#070a13]">
-                <div className="relative flex items-center justify-center mb-3">
-                  <div className="w-12 h-12 rounded-full border-2 border-emerald-500/10 border-t-emerald-400 animate-spin"></div>
-                  <Smartphone className="h-4.5 w-4.5 text-emerald-400 absolute" />
+              <div className="absolute inset-0 bg-[#070a13] z-20 flex flex-col justify-center items-center p-8 text-center">
+                <div className="relative flex flex-col items-center justify-center mb-5">
+                  {/* Glowing Launcher Icon Frame */}
+                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-[0_0_25px_rgba(59,130,246,0.35)] border border-blue-500/30 mb-4 animate-pulse">
+                    <img 
+                      src={superintendentIcon} 
+                      alt="Superintendent Launcher Icon"
+                      className="w-full h-full object-cover select-none"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                  {/* Minimal native circular loading ring below icon */}
+                  <div className="w-6 h-6 rounded-full border-2 border-blue-500/10 border-t-blue-400 animate-spin"></div>
                 </div>
-                <span className="font-display font-medium text-xs text-slate-200">Inicializando WebView Android</span>
-                <span className="text-[9px] font-mono text-zinc-500 mt-1 truncate max-w-[200px]">{targetUrl}</span>
+                <span className="font-sans font-semibold text-sm text-slate-100 tracking-wide">Iniciando Portal Superintendente</span>
+                <span className="text-[9.5px] font-mono text-blue-400/70 mt-1 uppercase tracking-wider font-bold">Conexão Segura Ativa</span>
               </div>
             )}
 
