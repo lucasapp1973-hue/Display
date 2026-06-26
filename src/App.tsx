@@ -27,14 +27,39 @@ export default function App() {
       window.scrollTo(0, 1);
     };
 
-    // Trigger on load
-    hideAddressBar();
+    const simulateInteraction = () => {
+      hideAddressBar();
+      try {
+        const body = document.body;
+        // Dispatch touchstart, touchend and click events to simulate real human finger tap
+        const touchStart = new TouchEvent('touchstart', { bubbles: true, cancelable: true });
+        body.dispatchEvent(touchStart);
+        
+        const touchEnd = new TouchEvent('touchend', { bubbles: true, cancelable: true });
+        body.dispatchEvent(touchEnd);
+        
+        const clickEvent = new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        body.dispatchEvent(clickEvent);
+      } catch (err) {
+        console.warn('Programmatic interaction simulation: ', err);
+      }
+    };
 
-    // Trigger on successive tiny intervals as the DOM stabilizes
-    const t1 = setTimeout(hideAddressBar, 100);
-    const t2 = setTimeout(hideAddressBar, 400);
+    // Trigger instantly
+    simulateInteraction();
 
-    // Capture the very first tap/interaction to instantly collapse if browser delayed it
+    // Trigger on successive tiny intervals as the DOM and iframe stabilize
+    const t1 = setTimeout(simulateInteraction, 50);
+    const t2 = setTimeout(simulateInteraction, 150);
+    const t3 = setTimeout(simulateInteraction, 300);
+    const t4 = setTimeout(simulateInteraction, 600);
+    const t5 = setTimeout(simulateInteraction, 1000);
+
+    // Capture actual early human taps to guarantee address bar collapse
     const handleInitialInteraction = () => {
       hideAddressBar();
       document.removeEventListener('touchstart', handleInitialInteraction);
@@ -47,6 +72,9 @@ export default function App() {
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+      clearTimeout(t5);
       document.removeEventListener('touchstart', handleInitialInteraction);
       document.removeEventListener('click', handleInitialInteraction);
     };
