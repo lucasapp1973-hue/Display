@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Smartphone, RefreshCw, ArrowLeft, Home, Menu, Wifi, Signal, Battery, ExternalLink } from 'lucide-react';
-// @ts-ignore
-import superintendentIcon from './assets/images/superintendent_icon_1782443595694.jpg';
-
 export default function App() {
   const targetUrl = 'https://ais-pre-h3ve3nynzxhojmrha7kf3h-750421392181.us-east1.run.app/?mode=superintendent';
   const [localTime, setLocalTime] = useState('12:00');
