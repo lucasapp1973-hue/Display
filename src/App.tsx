@@ -27,54 +27,20 @@ export default function App() {
       window.scrollTo(0, 1);
     };
 
-    const simulateInteraction = () => {
-      hideAddressBar();
-      try {
-        const body = document.body;
-        // Dispatch touchstart, touchend and click events to simulate real human finger tap
-        const touchStart = new TouchEvent('touchstart', { bubbles: true, cancelable: true });
-        body.dispatchEvent(touchStart);
-        
-        const touchEnd = new TouchEvent('touchend', { bubbles: true, cancelable: true });
-        body.dispatchEvent(touchEnd);
-        
-        const clickEvent = new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          view: window
-        });
-        body.dispatchEvent(clickEvent);
-      } catch (err) {
-        console.warn('Programmatic interaction simulation: ', err);
-      }
-    };
-
-    // Trigger instantly
-    simulateInteraction();
-
-    // Trigger on successive tiny intervals as the DOM and iframe stabilize
-    const t1 = setTimeout(simulateInteraction, 50);
-    const t2 = setTimeout(simulateInteraction, 150);
-    const t3 = setTimeout(simulateInteraction, 300);
-    const t4 = setTimeout(simulateInteraction, 600);
-    const t5 = setTimeout(simulateInteraction, 1000);
-
-    // Capture actual early human taps to guarantee address bar collapse
+    // Capture actual early human taps to guarantee address bar collapse safely (trusted events)
     const handleInitialInteraction = () => {
       hideAddressBar();
       document.removeEventListener('touchstart', handleInitialInteraction);
       document.removeEventListener('click', handleInitialInteraction);
     };
 
+    // Trigger on load
+    hideAddressBar();
+
     document.addEventListener('touchstart', handleInitialInteraction, { passive: true });
     document.addEventListener('click', handleInitialInteraction, { passive: true });
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
-      clearTimeout(t5);
       document.removeEventListener('touchstart', handleInitialInteraction);
       document.removeEventListener('click', handleInitialInteraction);
     };
@@ -97,20 +63,6 @@ export default function App() {
 
       {/* Pure Native Android Shell Wrapper (Centered with sleek flagship dimensions) */}
       <div className="relative z-10 flex flex-col items-center">
-        
-        {/* Subtle helper banner to allow opening outside iframe if X-Frame-Options blocks loading */}
-        <div className="mb-4 bg-slate-900/80 backdrop-blur-md border border-slate-800 px-4 py-2 rounded-full flex items-center gap-3 shadow-lg max-w-sm">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-[11px] font-mono text-zinc-300">Superintendent Companion Active</span>
-          <a 
-            href={targetUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] font-mono text-emerald-400 hover:text-emerald-300 transition flex items-center gap-0.5 border-l border-slate-800 pl-3 font-bold"
-          >
-            ABRIR CHEIO <ExternalLink className="h-3 w-3" />
-          </a>
-        </div>
 
         {/* Physical Smartphone Frame Layout */}
         <div className="relative w-[380px] h-[760px] rounded-[3.2rem] border-[12px] border-zinc-800 bg-black flex flex-col justify-between overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.85)] ring-2 ring-slate-800/60">
@@ -188,11 +140,6 @@ export default function App() {
           </div>
 
         </div>
-
-        {/* Minimal Bottom Label */}
-        <span className="text-[10px] font-mono text-zinc-600 mt-4 tracking-wider uppercase select-none">
-          PORTAL COMPANION • ACTIVE SECURED CONNECTION
-        </span>
 
       </div>
     </div>
