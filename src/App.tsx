@@ -90,26 +90,6 @@ export default function App() {
 
           {/* 2. Embedded Web Content viewport */}
           <div className="relative flex-grow w-full h-full bg-slate-950 overflow-hidden">
-            {iframeLoading && (
-              <div className="absolute inset-0 bg-[#070a13] z-20 flex flex-col justify-center items-center p-8 text-center">
-                <div className="relative flex flex-col items-center justify-center mb-5">
-                  {/* Glowing Launcher Icon Frame */}
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden shadow-[0_0_25px_rgba(59,130,246,0.35)] border border-blue-500/30 mb-4 animate-pulse">
-                    <img 
-                      src={superintendentIcon} 
-                      alt="Superintendent Launcher Icon"
-                      className="w-full h-full object-cover select-none"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  {/* Minimal native circular loading ring below icon */}
-                  <div className="w-6 h-6 rounded-full border-2 border-blue-500/10 border-t-blue-400 animate-spin"></div>
-                </div>
-                <span className="font-sans font-semibold text-sm text-slate-100 tracking-wide">Iniciando Portal Superintendente</span>
-                <span className="text-[9.5px] font-mono text-blue-400/70 mt-1 uppercase tracking-wider font-bold">Conexão Segura Ativa</span>
-              </div>
-            )}
-
             <iframe 
               key={iframeKey}
               src={targetUrl}
