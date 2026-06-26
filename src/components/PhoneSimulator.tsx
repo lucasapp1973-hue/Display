@@ -25,7 +25,9 @@ import {
   Info,
   Smartphone,
   ExternalLink,
-  Laptop
+  Laptop,
+  AlertCircle,
+  X
 } from 'lucide-react';
 import { DeviceSettings, SystemLog, WorkspaceNote } from '../types';
 
@@ -84,6 +86,7 @@ export function PhoneSimulator({
   // Native PWA support
   const [pwaPrompt, setPwaPrompt] = useState<any>(null);
   const [showInstallSuccess, setShowInstallSuccess] = useState(false);
+  const [showFrameWarning, setShowFrameWarning] = useState(true);
 
   useEffect(() => {
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -589,29 +592,88 @@ export function PhoneSimulator({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="w-full h-full relative"
+                  className="w-full h-full relative flex flex-col"
                 >
-                  {iframeLoading && (
-                    <div className="absolute inset-0 bg-slate-950/95 z-20 flex flex-col justify-center items-center p-8 text-center bg-[#070a13]">
-                      <div className="relative flex items-center justify-center mb-4">
-                        <div className="w-14 h-14 rounded-full border-2 border-emerald-500/10 border-t-emerald-400 animate-spin"></div>
-                        <Smartphone className="h-5 w-5 text-emerald-400 absolute" />
+                  {/* Real-time Android Browser Chrome Address Bar */}
+                  <div className="w-full bg-[#111625] border-b border-slate-800/80 px-2.5 py-1.5 flex items-center justify-between gap-1.5 z-25 shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+                    <div className="bg-slate-950 border border-slate-800/80 rounded-lg px-2 py-1 flex items-center justify-between gap-1.5 flex-grow max-w-[240px]">
+                      <div className="flex items-center gap-1.5 overflow-hidden">
+                        <span className="text-emerald-400 text-[10px]" title="Conexão Segura">🔒</span>
+                        <span className="text-[9px] font-mono text-zinc-400 truncate tracking-tight">{url}</span>
                       </div>
-                      <span className="font-display font-medium text-sm text-slate-200">WebView Android</span>
-                      <span className="text-[9.5px] font-mono text-zinc-500 mt-1.5 truncate max-w-[220px]">{url}</span>
+                      <button 
+                        onClick={reloadIframe}
+                        className="text-zinc-500 hover:text-emerald-400 transition"
+                        title="Recarregar"
+                      >
+                        <RefreshCw className="h-2.5 w-2.5" />
+                      </button>
                     </div>
-                  )}
 
-                  <iframe 
-                    key={iframeKey}
-                    id="simulated-webview"
-                    src={url}
-                    onLoad={handleIframeLoad}
-                    className="w-full h-full border-none bg-slate-950"
-                    title="Android App Container Layer"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                    referrerPolicy="no-referrer"
-                  />
+                    <a 
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-slate-950 text-[10px] font-mono font-bold transition flex items-center gap-1 shadow-md cursor-pointer shrink-0"
+                      title="Abrir diretamente em nova aba"
+                    >
+                      <span>ABRIR ↗</span>
+                    </a>
+                  </div>
+
+                  {/* Inside layout containing iframe and notifications */}
+                  <div className="relative flex-grow w-full bg-slate-950 overflow-hidden">
+                    {iframeLoading && (
+                      <div className="absolute inset-0 bg-slate-950/95 z-20 flex flex-col justify-center items-center p-8 text-center bg-[#070a13]">
+                        <div className="relative flex items-center justify-center mb-4">
+                          <div className="w-14 h-14 rounded-full border-2 border-emerald-500/10 border-t-emerald-400 animate-spin"></div>
+                          <Smartphone className="h-5 w-5 text-emerald-400 absolute" />
+                        </div>
+                        <span className="font-display font-medium text-sm text-slate-200">WebView Android</span>
+                        <span className="text-[9.5px] font-mono text-zinc-500 mt-1.5 truncate max-w-[220px]">{url}</span>
+                      </div>
+                    )}
+
+                    <iframe 
+                      key={iframeKey}
+                      id="simulated-webview"
+                      src={url}
+                      onLoad={handleIframeLoad}
+                      className="w-full h-full border-none bg-slate-950"
+                      title="Android App Container Layer"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                      referrerPolicy="no-referrer"
+                    />
+
+                    {/* Clever dynamic helper if iframe fails or is blocked by X-Frame-Options */}
+                    <AnimatePresence>
+                      {showFrameWarning && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 30 }}
+                          className="absolute bottom-4 left-3.5 right-3.5 z-30 bg-slate-900/95 backdrop-blur-md border border-amber-500/40 p-3 rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.6)] flex gap-2.5 items-start"
+                        >
+                          <AlertCircle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                          <div className="flex-grow">
+                            <h4 className="text-[10px] font-sans font-semibold text-slate-100 flex justify-between items-center leading-none">
+                              <span>Sua Conexão foi Recusada?</span>
+                              <button 
+                                onClick={() => setShowFrameWarning(false)}
+                                className="text-zinc-500 hover:text-slate-200 cursor-pointer"
+                                title="Dispensar aviso"
+                              >
+                                <X className="h-3.5 w-3.5" />
+                              </button>
+                            </h4>
+                            <p className="text-[8.5px] text-zinc-400 leading-normal mt-1">
+                              Servidores privados de visualização do Google AI Studio bloqueiam aninhamento em iframes (erro <code>X-Frame-Options</code>). Toque no botão verde <b>ABRIR ↗</b> no topo do celular para usar sem limites!
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
 
                   {/* 
                     EXTREMELY ADVANCED SWIPE DOWN / EXPAND BUTTON BAR
